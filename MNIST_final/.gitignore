@@ -1,0 +1,6 @@
+checkpoints/
+checkpoints*/
+outputs/
+data/
+KL_visual/
+outputs*/
