@@ -16,15 +16,16 @@ torch.backends.cudnn.benchmark = True
 use_cuda = torch.cuda.is_available() ## if have gpu or cpu
 
 def main(args):
+    ## random seeds
+    seed = args.seed
+
     if use_cuda:
         print("**using GPU training model**")
         torch.cuda.set_device(args.gpu)
-        torch.manual_seed(seed)
-        torch.cuda.manual_seed(seed)
-    ## random seeds
-    seed = args.seed
-    np.random.seed(seed)
+        torch.manual_seed(args.seed)
+        torch.cuda.manual_seed(args.seed)
     
+    np.random.seed(seed)
     net = Solver(args)
 
     if args.train:
