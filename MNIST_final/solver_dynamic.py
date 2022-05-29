@@ -105,7 +105,7 @@ class Solver(object):
         self.Kp = args.Kp
         self.Ki = args.Ki
         self.period = args.past_T
-        if args.dataset.lower() == 'MNIST':
+        if args.dataset.lower() == 'mnist':
             self.nc = 1
             self.decoder_dist = 'bernoulli'
         elif args.dataset.lower() == '3dchairs':
@@ -115,6 +115,7 @@ class Solver(object):
             self.nc = 3
             self.decoder_dist = 'gaussian'
         else:
+            print("data type is incorrect")
             raise NotImplementedError
         
         if args.model == 'H':
@@ -242,7 +243,8 @@ class Solver(object):
                         fw_log.flush()
                         fw_kl.flush()
                 
-                if self.save_output and self.global_iter%20000==0:
+                if self.global_iter%200==0:
+                    print("visualize the images")
                     self.viz_traverse()
 
                 if self.global_iter % self.save_step == 0:
@@ -291,6 +293,7 @@ class Solver(object):
         rand_idx = random.randint(1, n_dsets-1)
 
         random_img = self.data_loader.dataset.__getitem__(rand_idx)
+        random_img = random_img[0]
         random_img = Variable(cuda(random_img, self.use_cuda), volatile=True).unsqueeze(0)
         random_img_z = encoder(random_img)[:, :self.z_dim]
 
@@ -301,15 +304,15 @@ class Solver(object):
             fixed_idx2 = 10 # ellipse
             fixed_idx3 = 60 # heart
             
-            fixed_img1 = self.data_loader.dataset.__getitem__(fixed_idx1)
+            fixed_img1 = self.data_loader.dataset.__getitem__(fixed_idx1)[0]
             fixed_img1 = Variable(cuda(fixed_img1, self.use_cuda), volatile=True).unsqueeze(0)
             fixed_img_z1 = encoder(fixed_img1)[:, :self.z_dim]
 
-            fixed_img2 = self.data_loader.dataset.__getitem__(fixed_idx2)
+            fixed_img2 = self.data_loader.dataset.__getitem__(fixed_idx2)[0]
             fixed_img2 = Variable(cuda(fixed_img2, self.use_cuda), volatile=True).unsqueeze(0)
             fixed_img_z2 = encoder(fixed_img2)[:, :self.z_dim]
 
-            fixed_img3 = self.data_loader.dataset.__getitem__(fixed_idx3)
+            fixed_img3 = self.data_loader.dataset.__getitem__(fixed_idx3)[0]
             fixed_img3 = Variable(cuda(fixed_img3, self.use_cuda), volatile=True).unsqueeze(0)
             fixed_img_z3 = encoder(fixed_img3)[:, :self.z_dim]
             
@@ -317,7 +320,7 @@ class Solver(object):
                  'fixed_heart':fixed_img_z3, 'random_img':random_img_z}
         else:
             fixed_idx = 0
-            fixed_img = self.data_loader.dataset.__getitem__(fixed_idx)
+            fixed_img = self.data_loader.dataset.__getitem__(fixed_idx)[0]
             fixed_img = Variable(cuda(fixed_img, self.use_cuda), volatile=True).unsqueeze(0)
             fixed_img_z = encoder(fixed_img)[:, :self.z_dim]
             Z = {'fixed_img':fixed_img_z, 'random_img':random_img_z, 'random_z':random_z}
@@ -350,12 +353,12 @@ class Solver(object):
             for i, key in enumerate(Z.keys()):
                 for j, val in enumerate(interpolation):
                     save_image(tensor=gifs[i][j].cpu(),
-                               filename=os.path.join(output_dir, '{}_{}.jpg'.format(key, j)),
+                               fp=os.path.join(output_dir, '{}_{}.jpg'.format(key, j)),
                                nrow=self.z_dim, pad_value=1)
                 
                 grid2gif(os.path.join(output_dir, key+'*.jpg'),
                          os.path.join(output_dir, key+'.gif'), delay=10)
-
+        
         self.net_mode(train=True)
     
     def net_mode(self, train):

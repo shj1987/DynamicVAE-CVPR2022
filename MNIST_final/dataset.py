@@ -23,6 +23,7 @@ def return_data(args):
     testloader = torch.utils.data.DataLoader(testset, batch_size=batch_size,
                                      shuffle=False, num_workers=4)
     print('***image size >> : ', image_size)
+
     if args.train:
         return trainloader
     else:
@@ -31,5 +32,3 @@ def return_data(args):
         print('-'*80)
         return testloader
         
-
-    

@@ -20,11 +20,12 @@ def main(args):
     seed = args.seed
 
     if use_cuda:
-        print("**using GPU training model**")
+        print("**using GPU training model now**")
         torch.cuda.set_device(args.gpu)
         torch.manual_seed(args.seed)
         torch.cuda.manual_seed(args.seed)
-    
+    else:
+        print("CPU training data now!!!!")
     np.random.seed(seed)
     net = Solver(args)
 
@@ -69,7 +70,7 @@ if __name__ == "__main__":
     parser.add_argument('--dset_dir', default='data', type=str, help='dataset directory')
     parser.add_argument('--dataset', default='MNIST', type=str, help='dataset name')
     parser.add_argument('--image_size', default=64, type=int, help='image size. now only (64,64) is supported')
-    parser.add_argument('--num_workers', default=7, type=int, help='dataloader num_workers')
+    parser.add_argument('--num_workers', default=16, type=int, help='dataloader num_workers')
     
     parser.add_argument('--viz_on', default=True, type=str2bool, help='enable visdom visualization')
     parser.add_argument('--viz_name', default='main', type=str, help='visdom env name')
