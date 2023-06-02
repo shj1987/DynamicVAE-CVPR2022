@@ -188,7 +188,7 @@ class Solver(object):
         queue = deque([0.] * (self.period-1))
         
         fw_log.write("Kp:{0:.5f} Ki:{1:.6f} C_iter:{2:.1f} period:{3} step_val:{4:.4f} batch:{5:.4f} ramp_steps:{6:.4f} past_T: {7:2f}\n" \
-                    .format(Kp, Ki, self.C_stop_iter, window_len, self.step_value, self.batch_size, self.ramp_steps, self.period))
+                    .format(self.Kp, self.Ki, self.C_stop_iter, window_len, self.step_value, self.batch_size, self.ramp_steps, self.period))
         fw_log.flush()
 
         while not out:
@@ -366,7 +366,7 @@ class Solver(object):
             for i, key in enumerate(Z.keys()):
                 for j, val in enumerate(interpolation):
                     save_image(tensor=gifs[i][j].cpu(),
-                               filename=os.path.join(output_dir, '{}_{}.jpg'.format(key, j)),
+                               fp=os.path.join(output_dir, '{}_{}.jpg'.format(key, j)),
                                nrow=self.z_dim, pad_value=1)
                 
                 grid2gif(os.path.join(output_dir, key+'*.jpg'),
